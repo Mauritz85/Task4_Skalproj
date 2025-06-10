@@ -72,12 +72,52 @@ namespace SkalProj_Datastrukturer_Minne
              * Below you can see some inspirational code to begin working.
             */
 
-            //List<string> theList = new List<string>();
-            //string input = Console.ReadLine();
-            //char nav = input[0];
-            //string value = input.substring(1);
 
-            //switch(nav){...}
+            List<string> theList = new List<string>();
+            bool running = true;
+            while (running)
+            {
+                Console.WriteLine("Please enter:"
+                    + "\n+<WORD> to add a word to the list"
+                    + "\n-<WORD> to remove a word from the list"
+                    + "\n0 to exit the application");
+
+
+                string? input = Console.ReadLine();
+                input = string.IsNullOrEmpty(input) ? "IsNullOrEmpty" : input;
+                char nav = input[0];
+                string theWord = input.Substring(1);
+
+                switch (nav)
+                {
+                    case '+':
+                        if (theList.Contains(theWord))
+                        {
+                            Console.WriteLine($"The word '{theWord}' is already in the list");
+                        }
+                        else
+                        {
+                            theList.Add(theWord);
+                            Console.WriteLine($"The word '{theWord}' successfully added! Word count: {theList.Count}. List capacity: {theList.Capacity}");
+                        }
+                        break;
+                    case '-':
+                        if (theList.Contains(theWord))
+                        {
+                            theList.Remove(theWord);
+                            Console.WriteLine($"The word '{theWord}' is successfully removed! Word count: {theList.Count}. List capacity: {theList.Capacity}");
+                        }
+                        else
+                            Console.WriteLine($"The word '{theWord}' doesn't exist in the list");
+                        break;
+                    case '0':
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please try again with a valid input");
+                        break;
+                }
+            }
         }
 
         /// <summary>
