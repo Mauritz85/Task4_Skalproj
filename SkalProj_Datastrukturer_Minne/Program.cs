@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.Linq;
+using System.Net.NetworkInformation;
+using System.Reflection.Metadata.Ecma335;
 
 namespace SkalProj_Datastrukturer_Minne
 {
     class Program
     {
-        /// <summary>
-        /// The main method, vill handle the menues for the program
-        /// </summary>
-        /// <param name="args"></param>
         static void Main()
         {
 
@@ -62,53 +62,39 @@ namespace SkalProj_Datastrukturer_Minne
         /// </summary>
         static void ExamineList()
         {
-            /*
-             * Loop this method untill the user inputs something to exit to main menue.
-             * Create a switch statement with cases '+' and '-'
-             * '+': Add the rest of the input to the list (The user could write +Adam and "Adam" would be added to the list)
-             * '-': Remove the rest of the input from the list (The user could write -Adam and "Adam" would be removed from the list)
-             * In both cases, look at the count and capacity of the list
-             * As a default case, tell them to use only + or -
-             * Below you can see some inspirational code to begin working.
-            */
-
-
             List<string> theList = new List<string>();
-            bool running = true;
-            while (running)
+            bool running = true; //bool that runs the while-loop if true. '0' input makes it false and exits the loop.
+            while (running) 
             {
                 Console.WriteLine("Please enter:"
-                    + "\n+<WORD> to add a word to the list"
-                    + "\n-<WORD> to remove a word from the list"
-                    + "\n0 to exit the application");
+                    + "\n '+NAME' to add a name to the list"
+                    + "\n '-NAME' to remove a name from the list"
+                    + "\n '0' to exit the application");
 
 
-                string? input = Console.ReadLine();
-                input = string.IsNullOrEmpty(input) ? "IsNullOrEmpty" : input;
-                char nav = input[0];
-                string theWord = input.Substring(1);
+                var (nav, name) = getUserInput(); //Method that get the users input and splits it into navigation choice and the input name
 
                 switch (nav)
                 {
                     case '+':
-                        if (theList.Contains(theWord))
+                        if (theList.Contains(name)) //checks if the list already includes the names to avoid duplicates.
                         {
-                            Console.WriteLine($"The word '{theWord}' is already in the list");
+                            Console.WriteLine($"The name '{name}' is already in the list");
                         }
                         else
                         {
-                            theList.Add(theWord);
-                            Console.WriteLine($"The word '{theWord}' successfully added! Word count: {theList.Count}. List capacity: {theList.Capacity}");
+                            theList.Add(name);
+                            Console.WriteLine($"The name '{name}' successfully added! Name count: {theList.Count}. List capacity: {theList.Capacity}");
                         }
                         break;
                     case '-':
-                        if (theList.Contains(theWord))
+                        if (theList.Contains(name)) //checks if the list already includes the names and deletes it from the list if it is.
                         {
-                            theList.Remove(theWord);
-                            Console.WriteLine($"The word '{theWord}' is successfully removed! Word count: {theList.Count}. List capacity: {theList.Capacity}");
+                            theList.Remove(name);
+                            Console.WriteLine($"The name '{name}' is successfully removed! Name count: {theList.Count}. List capacity: {theList.Capacity}");
                         }
                         else
-                            Console.WriteLine($"The word '{theWord}' doesn't exist in the list");
+                            Console.WriteLine($"The name '{name}' doesn't exist in the list");
                         break;
                     case '0':
                         running = false;
@@ -120,38 +106,159 @@ namespace SkalProj_Datastrukturer_Minne
             }
         }
 
-        /// <summary>
-        /// Examines the datastructure Queue
-        /// </summary>
         static void ExamineQueue()
         {
-            /*
-             * Loop this method untill the user inputs something to exit to main menue.
-             * Create a switch with cases to enqueue items or dequeue items
-             * Make sure to look at the queue after Enqueueing and Dequeueing to see how it behaves
-            */
+
+            Queue<string> theQueue = new Queue<string>();
+            bool running = true;
+            while (running)
+            {
+                Console.WriteLine("Please enter a choice and press <ENTER>:"
+                    + "\n '+NAME' to add a customer to the queue"
+                    + "\n '-' to serve next customer in line and make them leave the queue"
+                    + "\n '0' to exit the application");
+
+                var (nav, name) = getUserInput();
+
+                switch (nav)
+                {
+                    case '+':
+                        theQueue.Enqueue(name); //adds name/person to the queue
+                        Console.WriteLine($"The customer '{name}' is added to the queue. There is now {theQueue.Count} people waiting in the queue.");
+                        break;
+                    case '-':
+                        if (theQueue.Count > 0) //checks that there is still people in the queue.
+                        {
+                            string firstInLine = theQueue.Peek(); //checks the name of the person first in line.
+                            theQueue.Dequeue(); //removes it
+                            Console.WriteLine($"The customer '{firstInLine}' was served and left the queue. There is now {theQueue.Count} people left waiting in the queue.");
+                        }
+                        else Console.WriteLine("The Queue is empty");
+                        break;
+                    case '0':
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please try again with a valid input");
+                        break;
+                }
+            }
         }
 
-        /// <summary>
-        /// Examines the datastructure Stack
-        /// </summary>
+
         static void ExamineStack()
         {
-            /*
-             * Loop this method until the user inputs something to exit to main menue.
-             * Create a switch with cases to push or pop items
-             * Make sure to look at the stack after pushing and and poping to see how it behaves
-            */
+            Stack<string> theStack = new Stack<string>();
+            bool running = true;
+            while (running)
+            {
+                Console.WriteLine("Please enter a choice and press <ENTER>:"
+                    + "\n '+NAME' to add a name to the stack"
+                    + "\n '-' to pick the remove the name on top of the stack"
+                    + "\n '0' to exit the application");
+
+
+                var (nav, name) = getUserInput();
+
+                switch (nav)
+                {
+                    case '+':
+                        theStack.Push(name);
+                        Console.WriteLine($"The name '{name}' is added to the stack. There is now {theStack.Count} names in the stack.");
+                        break;
+                    case '-':
+                        if (theStack.Count > 0)
+                        {
+                            string OnTopOfStack = theStack.Pop(); //Checks name of person on top of stack and removes it
+                            Console.WriteLine($"The name '{OnTopOfStack}' was removed.");
+                        }
+                        else Console.WriteLine("The stack is empty");
+                        break;
+                    case '0':
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please try again with a valid input");
+                        break;
+                }
+            }
         }
 
         static void CheckParanthesis()
         {
-            /*
-             * Use this method to check if the paranthesis in a string is Correct or incorrect.
-             * Example of correct: (()), {}, [({})],  List<int> list = new List<int>() { 1, 2, 3, 4 };
-             * Example of incorrect: (()]), [), {[()}],  List<int> list = new List<int>() { 1, 2, 3, 4 );
-             */
+            bool running = true;
+            while (running)
+            {
+                Console.WriteLine("Input a combination of paranthesis, brackets and curly brackets to check if they are properly balanced."
+                    + "\nor '0' to exit the application");
 
+
+                string? input = Console.ReadLine();
+                input = string.IsNullOrEmpty(input) ? "IsNullOrEmpty" : input;
+                char nav = input[0];
+
+                char[] allowedChars = { '(', ')', '[', ']', '{', '}' }; //array with all the allowed characters (brackets)
+                char[] openingBrackets = { '(', '[', '{' }; //the order here is crucial
+                char[] closingBrackets = { ')', ']', '}' }; //the order here is crucial
+
+                switch (nav)
+                {
+                    case '0':
+                        running = false;
+                        break;
+                    default:
+                        if (input.All(c => allowedChars.Contains(c)))  // First check: input must only contain allowed bracket characters
+                        {
+                            Stack<char> stack = new Stack<char>();  // Used to track opening brackets
+
+                            bool balanced = true; // Assume balanced until proven otherwise
+
+                            foreach (char c in input)
+                            {
+                                if (openingBrackets.Contains(c)) // If character is an opening bracket, push it to the stack
+                                {
+                                    stack.Push(c);
+                                }
+                                else if (closingBrackets.Contains(c)) // Else if character is an closing bracket..
+                                {
+                                    if (stack.Count == 0) // ...but no opening bracket to match it with..
+                                    {
+                                        balanced = false; //...it's unbalanced!
+                                        break;
+                                    }
+
+                                    char top = stack.Pop();  //...else check the bracket on top of the stack and remove it
+                                    int closeIndex = Array.IndexOf(closingBrackets, c); //Check the index of the current closingbracket in the closingbrackets array.
+                                    if (top != openingBrackets[closeIndex]) //If the top opening bracket (now removed) isn't matching the corresponding opening bracket in the array..
+                                    {
+                                        balanced = false; //it's unbalanced
+                                        break;
+                                    }
+                                }
+                            }
+
+                            Console.WriteLine(balanced && stack.Count == 0 //When the stack is emptied and the balanced is still "true" 
+                                ? "Brackets are balanced!" //all the brackets are balanced.
+                                : "Brackets are NOT balanced!");// otherwise show it's not.
+
+                        }
+                        else Console.WriteLine("Not a valid input. Try again.");
+                        break;
+                }
+            }
+
+
+        }
+
+        static (char nav, string name) getUserInput()
+        {
+            Console.Write("> ");
+            string? input = Console.ReadLine();
+            input = string.IsNullOrEmpty(input) ? "IsNullOrEmpty" : input;
+            char nav = input[0];
+            string name = input.Substring(1);
+
+            return (nav, name);
         }
 
     }
